@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bizim Hikayemiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ece8f4;--paper:#fff;--ink:#261a33;--mute:#6f6280;--rose:#d63a76;--line:#cfc6e0;--shadow:0 6px 18px rgba(38,26,51,.12);
+--serif:"Instrument Serif",Georgia,serif;--sans:"Figtree",system-ui,sans-serif}
+@media(prefers-color-scheme:dark){:root{--bg:#181022;--paper:#2a1d3a;--ink:#f3ecfa;--mute:#b3a4c8;--rose:#ff6b9d;--line:#3d2d52;--shadow:0 6px 18px rgba(0,0,0,.4)}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--sans);padding:env(safe-area-inset-top) 0 calc(96px + env(safe-area-inset-bottom))}
+[hidden]{display:none!important}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+.wrap{max-width:620px;margin:0 auto;padding:0 20px}
+.btn{background:var(--rose);color:#fff;border:0;border-radius:999px;padding:12px 22px;font-weight:600}
+.ghost{background:none;border:1px solid var(--line);color:var(--mute);border-radius:999px;padding:6px 14px;font-size:14px}
+input,textarea{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:6px 0 14px}
+label{font-size:14px;color:var(--mute)}
+/* login */
+#login,#gate{min-height:100vh;display:grid;place-items:center;padding:24px}
+#login form,#gate>*{width:100%;max-width:340px}
+#login h1,#gate h1{font:italic 400 44px/1.05 var(--serif);margin:0 0 6px}
+#login p,#gate p{margin:0 0 24px;color:var(--mute)}
+#login p.err,#gate p.err{margin:0 0 8px;color:var(--rose)}
+.link{background:none;border:0;color:var(--mute);text-decoration:underline;margin-top:14px;padding:6px 0;font-size:14px;width:100%}
+.err{color:var(--rose);font-size:14px;min-height:20px;margin:0 0 8px}
+/* hero */
+.hero{text-align:center;padding:48px 0 28px}
+.names{font:italic 400 34px/1.1 var(--serif);margin:0}
+.since{color:var(--mute);font-size:14px;margin:6px 0 18px}
+.days{font:400 clamp(96px,30vw,168px)/.9 var(--serif);color:var(--rose);margin:0;letter-spacing:-.02em}
+.days-l{font:italic 400 24px var(--serif);margin:0 0 14px}
+.ymd{font-weight:600;margin:0}
+.live{color:var(--mute);font-size:14px;font-variant-numeric:tabular-nums;margin:2px 0 14px}
+.chip{display:inline-block;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:5px 14px;font-size:14px}
+.bar{display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+.bar span{font-size:14px;color:var(--mute)}
+/* timeline */
+h2{font:italic 400 28px var(--serif);margin:8px 0 18px}
+.empty{text-align:center;color:var(--mute);padding:32px 0}
+.mem{background:var(--paper);box-shadow:var(--shadow);border-radius:6px;padding:12px 12px 16px;margin:0 0 28px}
+.mem:nth-child(odd){transform:rotate(-.8deg)}
+.mem:nth-child(even){transform:rotate(.7deg)}
+.mem img{display:block;width:100%;border-radius:2px;margin-bottom:12px}
+.mem .d{font-size:13px;color:var(--rose);font-weight:600;margin:0}
+.mem h3{font:italic 400 26px/1.15 var(--serif);margin:2px 0 6px}
+.mem p.t{margin:0;white-space:pre-wrap}
+.mem .x{float:right;background:none;border:0;color:var(--mute);font-size:13px;padding:0}
+/* fab + dialogs */
+.fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));box-shadow:var(--shadow);padding:14px 24px}
+dialog{border:0;border-radius:18px;background:var(--bg);color:var(--ink);width:min(92vw,440px);padding:22px;box-shadow:var(--shadow)}
+dialog::backdrop{background:rgba(20,10,30,.55)}
+dialog h2{margin-top:0}
+.row{display:flex;gap:10px;justify-content:flex-end;margin-top:4px}
+@media(prefers-reduced-motion:no-preference){dialog[open]{animation:pop .18s ease-out}@keyframes pop{from{transform:scale(.96);opacity:0}}}
+</style>
+</head>
+<body>
+
+<section id="login" hidden>
+  <form id="loginForm">
+    <h1>Bizim hikayemiz</h1>
+    <p>Sadece ikimiz için. Giriş yap.</p>
+    <label for="em">E-posta</label>
+    <input id="em" type="email" autocomplete="email" required>
+    <label for="pw">Şifre</label>
+    <input id="pw" type="password" autocomplete="current-password" required>
+    <p class="err" id="loginErr"></p>
+    <button class="btn" id="loginBtn" style="width:100%">Giriş yap</button>
+    <button type="button" class="link" id="toggle">Hesabım yok, kayıt ol</button>
+  </form>
+</section>
+
+<section id="gate" hidden>
+  <form id="setupForm" hidden>
+    <h1>Hoş geldin</h1>
+    <p>Bu siteyi sadece sen ve sevgilin görebilirsin. Sevgilinin e-posta adresini yaz, o da bu adresle kayıt olup girsin.</p>
+    <label for="pe">Sevgilinin e-postası</label>
+    <input id="pe" type="email" required>
+    <p class="err" id="setupErr"></p>
+    <button class="btn" style="width:100%">Kaydet ve devam et</button>
+    <button type="button" class="link gateOut">Çıkış yap</button>
+  </form>
+  <div id="denied" hidden>
+    <h1>Erişimin yok</h1>
+    <p>Bu site sadece iki kişiye özel ve bu e-posta onlardan biri değil.</p>
+    <button type="button" class="btn gateOut" style="width:100%">Çıkış yap</button>
+  </div>
+</section>
+
+<main id="app" hidden>
+  <div class="wrap">
+    <div class="bar">
+      <button class="ghost" id="editInfo">Tarihi ve isimleri düzenle</button>
+      <button class="ghost" id="logout">Çıkış</button>
+    </div>
+    <header class="hero">
+      <h1 class="names" id="names">Biz</h1>
+      <p class="since" id="since"></p>
+      <div id="counter"></div>
+    </header>
+    <h2>Anılarımız</h2>
+    <div id="list"></div>
+  </div>
+  <button class="btn fab" id="addBtn">Anı ekle</button>
+</main>
+
+<dialog id="infoDlg">
+  <form method="dialog" id="infoForm">
+    <h2>Bizim bilgilerimiz</h2>
+    <label for="n1">Senin ismin</label><input id="n1">
+    <label for="n2">Sevgilinin ismi</label><input id="n2">
+    <label for="st">İlişki başlangıç tarihi</label><input id="st" type="date" required>
+    <div class="row"><button type="button" class="ghost" data-close>Vazgeç</button><button class="btn">Kaydet</button></div>
+  </form>
+</dialog>
+
+<dialog id="memDlg">
+  <form method="dialog" id="memForm">
+    <h2>Yeni anı</h2>
+    <label for="mt">Başlık</label><input id="mt" required maxlength="80">
+    <label for="md">Tarih</label><input id="md" type="date" required>
+    <label for="mx">Neler oldu?</label><textarea id="mx" rows="4" maxlength="2000"></textarea>
+    <label for="mp">Fotoğraf (isteğe bağlı)</label><input id="mp" type="file" accept="image/*">
+    <p class="err" id="memErr"></p>
+    <div class="row"><button type="button" class="ghost" data-close>Vazgeç</button><button class="btn" id="memSave">Kaydet</button></div>
+  </form>
+</dialog>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+// 1) Firebase konsolundan aldığın config'i buraya yapıştır
+const firebaseConfig = {
+  apiKey: "AIzaSyAYLi-0aiH2xLNf4h7HIzIm9S_P2YDOVOo",
+  authDomain: "album-81e92.firebaseapp.com",
+  projectId: "album-81e92",
+  storageBucket: "album-81e92.firebasestorage.app",
+  messagingSenderId: "1096297018028",
+  appId: "1:1096297018028:web:ea25452df5c30aec672509"
+};
+
+const auth = getAuth(initializeApp(firebaseConfig));
+const db = getFirestore(auth.app);
+const $ = s => document.querySelector(s);
+const fmt = d => new Date(d + "T00:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+let info = {}, unsubs = [];
+
+let started = false, signup = false;
+
+onAuthStateChanged(auth, user => {
+  unsubs.forEach(u => u()); unsubs = []; started = false;
+  $("#login").hidden = !!user; $("#app").hidden = true; $("#gate").hidden = true;
+  if (!user) return;
+  // Sevgililer listesi: ilk giren kişi sevgilinin e-postasını yazar, kurallar bu listeye göre çalışır
+  unsubs.push(onSnapshot(doc(db, "couple", "members"),
+    s => s.exists() ? startApp() : showGate("setup"),
+    () => showGate("denied")));
+});
+
+function showGate(mode) {
+  $("#app").hidden = true; $("#gate").hidden = false;
+  $("#setupForm").hidden = mode !== "setup"; $("#denied").hidden = mode !== "denied";
+}
+
+function startApp() {
+  if (started) return; started = true;
+  $("#gate").hidden = true; $("#app").hidden = false;
+  unsubs.push(onSnapshot(doc(db, "couple", "info"), s => { info = s.exists() ? s.data() : {}; renderHero(); }));
+  unsubs.push(onSnapshot(query(collection(db, "memories"), orderBy("date", "desc")),
+    s => renderList(s.docs.map(d => ({ id: d.id, ...d.data() }))),
+    () => { $("#list").innerHTML = '<p class="empty">Anılar yüklenemedi. İnternetini kontrol et.</p>'; }));
+}
+
+$("#toggle").onclick = () => {
+  signup = !signup; $("#loginErr").textContent = "";
+  $("#loginBtn").textContent = signup ? "Kayıt ol" : "Giriş yap";
+  $("#toggle").textContent = signup ? "Zaten hesabım var" : "Hesabım yok, kayıt ol";
+  $("#pw").autocomplete = signup ? "new-password" : "current-password";
+};
+
+$("#loginForm").addEventListener("submit", async e => {
+  e.preventDefault(); $("#loginErr").textContent = "";
+  const em = $("#em").value.trim().toLowerCase(), pw = $("#pw").value;
+  try { signup ? await createUserWithEmailAndPassword(auth, em, pw) : await signInWithEmailAndPassword(auth, em, pw); }
+  catch (err) {
+    const c = err.code || "";
+    $("#loginErr").textContent =
+      c.includes("email-already-in-use") ? "Bu e-posta zaten kayıtlı. Giriş yapmayı dene." :
+      c.includes("weak-password") ? "Şifre en az 6 karakter olmalı." :
+      c.includes("operation-not-allowed") ? "Konsolda E-posta/Şifre girişini açmalısın." :
+      signup ? "Kayıt olunamadı. Bilgileri kontrol et." : "E-posta ya da şifre yanlış.";
+  }
+});
+
+$("#setupForm").addEventListener("submit", async e => {
+  e.preventDefault(); $("#setupErr").textContent = "";
+  const me = auth.currentUser.email.toLowerCase(), pe = $("#pe").value.trim().toLowerCase();
+  if (pe === me) { $("#setupErr").textContent = "Kendi adresini değil, sevgilinin adresini yaz."; return; }
+  try { await setDoc(doc(db, "couple", "members"), { emails: [me, pe] }); }
+  catch { $("#setupErr").textContent = "Kaydedilemedi. Firestore kurallarını yayınladın mı?"; }
+});
+document.querySelectorAll(".gateOut").forEach(b => b.onclick = () => signOut(auth));
+
+$("#logout").onclick = () => signOut(auth);
+document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => b.closest("dialog").close());
+
+/* ---------- Sayaç ---------- */
+function renderHero() {
+  const a = info.n1, b = info.n2;
+  $("#names").textContent = a && b ? `${a} & ${b}` : "Biz";
+  $("#since").textContent = info.start ? `${fmt(info.start)} tarihinden beri` : "";
+  tick();
+}
+function tick() {
+  const c = $("#counter");
+  if (!info.start) { c.innerHTML = '<p class="live">Başlangıç tarihini eklemek için “Tarihi ve isimleri düzenle”ye dokun.</p>'; return; }
+  const s = new Date(info.start + "T00:00:00"), n = new Date();
+  if (n < s) { c.innerHTML = '<p class="live">Başlangıç tarihi gelecekte görünüyor.</p>'; return; }
+  let y = n.getFullYear() - s.getFullYear(), m = n.getMonth() - s.getMonth(), d = n.getDate() - s.getDate();
+  if (d < 0) { m--; d += new Date(n.getFullYear(), n.getMonth(), 0).getDate(); }
+  if (m < 0) { y--; m += 12; }
+  const ms = n - s, days = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, mi = Math.floor(ms / 6e4) % 60, se = Math.floor(ms / 1e3) % 60;
+  const today = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  let next = new Date(n.getFullYear(), s.getMonth(), s.getDate());
+  if (next < today) next.setFullYear(next.getFullYear() + 1);
+  const left = Math.round((next - today) / 864e5);
+  const chip = left === 0 && y > 0 ? "Bugün yıldönümümüz!" : `Yıldönümüne ${left} gün kaldı`;
+  c.innerHTML = `<p class="days">${days.toLocaleString("tr-TR")}</p><p class="days-l">gündür birlikteyiz</p>
+    <p class="ymd">${y} yıl, ${m} ay, ${d} gün</p>
+    <p class="live">${h} saat ${mi} dakika ${se} saniye</p><span class="chip">${chip}</span>`;
+}
+setInterval(tick, 1000);
+
+$("#editInfo").onclick = () => { $("#n1").value = info.n1 || ""; $("#n2").value = info.n2 || ""; $("#st").value = info.start || ""; $("#infoDlg").showModal(); };
+$("#infoForm").addEventListener("submit", () => {
+  setDoc(doc(db, "couple", "info"), { n1: $("#n1").value.trim(), n2: $("#n2").value.trim(), start: $("#st").value });
+});
+
+/* ---------- Anılar ---------- */
+function esc(t) { const p = document.createElement("p"); p.textContent = t || ""; return p.innerHTML; }
+function renderList(items) {
+  $("#list").innerHTML = items.length ? items.map(m => `
+    <article class="mem">
+      <button class="x" data-del="${m.id}">Sil</button>
+      ${m.photo ? `<img src="${m.photo}" alt="${esc(m.title)}">` : ""}
+      <p class="d">${fmt(m.date)}</p><h3>${esc(m.title)}</h3>${m.text ? `<p class="t">${esc(m.text)}</p>` : ""}
+    </article>`).join("") : '<p class="empty">Henüz anı yok. İlkini ekle.</p>';
+}
+$("#list").addEventListener("click", e => {
+  const id = e.target.dataset.del;
+  if (id && confirm("Bu anıyı silmek istediğine emin misin?")) deleteDoc(doc(db, "memories", id));
+});
+
+$("#addBtn").onclick = () => { $("#memForm").reset(); $("#md").value = new Date().toISOString().slice(0, 10); $("#memErr").textContent = ""; $("#memDlg").showModal(); };
+
+// Fotoğrafı küçültüp Firestore'a yazıyoruz (Storage için ücretli plan gerekmesin diye)
+function shrink(file) {
+  return new Promise((ok, no) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, 1000 / Math.max(img.width, img.height)), c = document.createElement("canvas");
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src); ok(c.toDataURL("image/jpeg", .72));
+    };
+    img.onerror = no; img.src = URL.createObjectURL(file);
+  });
+}
+$("#memForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const btn = $("#memSave"); btn.disabled = true; btn.textContent = "Kaydediliyor…"; $("#memErr").textContent = "";
+  try {
+    const f = $("#mp").files[0];
+    await addDoc(collection(db, "memories"), {
+      title: $("#mt").value.trim(), date: $("#md").value, text: $("#mx").value.trim(),
+      photo: f ? await shrink(f) : "", by: auth.currentUser.email, created: serverTimestamp()
+    });
+    $("#memDlg").close();
+  } catch { $("#memErr").textContent = "Kaydedilemedi. Fotoğraf çok büyük olabilir ya da bağlantını kontrol et."; }
+  btn.disabled = false; btn.textContent = "Kaydet";
+});
+</script>
+</body>
+</html>
